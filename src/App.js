@@ -110,6 +110,21 @@ function App() {
   const [query, setQuery] = useState("");
   const [roty, setRoty] = useState(0.0);
 
+  // update query when input value changes
+  useEffect(() => {
+    const input = document.getElementById("search");
+    input.addEventListener("input", (event) => {
+      setQuery(event.target.value);
+    });
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        // redirect to google search of query
+        //FIXME: query is always empty
+        window.location.href = `https://www.google.com/search?q=${query}`;
+      } 
+    });
+  }, [query]);
+  /*
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
@@ -133,15 +148,20 @@ function App() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [query]);
+  */
 
   return (
-    <Canvas>
-      <Text fontSize={0.5} position={[0, 0, 0]}>{query}</Text>
+    <>
+      <input type="text" id="search" autofocus="autofocus" />
 
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      <Box shaderName={shaderName} roty={roty} position={[0, 0, -10]} />
-    </Canvas>
+      <Canvas>
+        <Text fontSize={0.5} position={[0, 0, 0]}>{query}</Text>
+
+        <ambientLight />
+        <pointLight position={[10, 10, 10]} />
+        <Box shaderName={shaderName} roty={roty} position={[0, 0, -10]} />
+      </Canvas>
+    </>
   );
 }
 
