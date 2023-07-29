@@ -45,9 +45,11 @@ function Box(props) {
   const fragmentShader = `
     uniform float iTime;
     uniform vec2 iResolution;  
+    varying vec2 vUv;
     ` + common + `
     ` + image + `
     void main() {
+      //mainImage(gl_FragColor, vUv * iResolution.xy);
       mainImage(gl_FragColor, gl_FragCoord.xy);
     }
   `;
@@ -65,9 +67,10 @@ function Box(props) {
 
   // rotate the cube
   useFrame(() => {
-    //ref.current.rotation.x = ref.current.rotation.y += 0.01;
-    //ref.current.rotation.x = ref.current.rotation.x + 0.01 % 360;
-    console.log(ref.current.rotation.x)
+    if (ref.current.rotation.y < props.roty)
+      ref.current.rotation.y = Math.min(ref.current.rotation.y + 0.05, props.roty)
+    else if (ref.current.rotation.y > props.roty)
+      ref.current.rotation.y = Math.max(ref.current.rotation.y - 0.05, props.roty)
   })
 
   return (
@@ -90,15 +93,21 @@ function Box(props) {
   )
 }
 
-const shaderNames = ["mslfWr", "3dXyWj", "dt3GDl"];
-//const shaderNames = ["dt3GDl"];
-// pick a random shader
-const shaderName = shaderNames[Math.floor(Math.random() * shaderNames.length)];
+const mrangeShaderNames = ["dt3GDl", "7lKSWW"];
 
+const shaderNames = [
+  "mslfWr", // My first ray marching
+  "3dXyWj"  // Simplex Noise Rotation 
+  ].concat(mrangeShaderNames);
+
+  // pick a random shader
+const shaderName = shaderNames[Math.floor(Math.random() * shaderNames.length)];
 
 function App() {
   // fill query with keystrokes
   const [query, setQuery] = useState("");
+  const [roty, setRoty] = useState(0.0);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
@@ -106,6 +115,11 @@ function App() {
       } else if (event.key === "Enter") {
         // redirect to google search of query
         window.location.href = `https://www.google.com/search?q=${query}`;
+    // handle left and right arrow keys
+      } else if (event.key === "ArrowLeft") {
+        setRoty((x) => x - Math.PI / 2);
+      } else if (event.key === "ArrowRight") {
+        setRoty((x) => x + Math.PI / 2);
       } else if (event.key.length > 1) {
         // do nothing
       } else {
@@ -124,7 +138,7 @@ function App() {
 
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
-      <Box shaderName={shaderName} position={[0, 0, -10]} />
+      <Box shaderName={shaderName} roty={roty} position={[0, 0, -10]} />
     </Canvas>
   );
 }
