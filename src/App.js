@@ -5,7 +5,7 @@ import { Text } from '@react-three/drei'
 import * as THREE from 'three';
 
 import vertexShader from './vertexShader';
-import fragmentShader from './fragmentShader';
+// import fragmentShader from './fragmentShader';
 
 function Box(props) {
   // This reference gives us direct access to the THREE.Mesh object
@@ -19,7 +19,9 @@ function Box(props) {
 
   // Subscribe this component to the render-loop, rotate the mesh every frame
   useFrame((state, delta) => {
-    setTime(time+delta);
+    if (hovered || true) { // use hovered var to please linter
+      setTime(time+delta);
+    }
   });
 
   useFrame(() => {
@@ -57,7 +59,7 @@ function Box(props) {
   const uniforms = useMemo(() => {
     return {
       iTime: {
-        value: time,
+        value: 0.0,
       },
       iResolution: {
         value: new THREE.Vector2(window.innerWidth, window.innerHeight)
