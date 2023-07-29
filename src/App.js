@@ -121,6 +121,10 @@ function App() {
         // redirect to google search of query
         //FIXME: query is always empty
         window.location.href = `https://www.google.com/search?q=${query}`;
+      } else if (event.key === "ArrowLeft") {
+        setRoty((x) => x - Math.PI / 2);
+      } else if (event.key === "ArrowRight") {
+        setRoty((x) => x + Math.PI / 2);
       } 
     });
   }, [query]);
