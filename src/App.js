@@ -83,7 +83,7 @@ function Box(props) {
       onClick={(event) => click(!clicked)}
       onPointerOver={(event) => hover(true)}
       onPointerOut={(event) => hover(false)}>
-      <boxGeometry args={[10, 10, 10]} />
+      <boxGeometry args={[30, 30, 30]} />
       <shaderMaterial
         ref={shaderRef}
         attach='material'
@@ -116,11 +116,21 @@ function App() {
     input.addEventListener("input", (event) => {
       setQuery(event.target.value);
     });
+
+    input.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+    
     input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
+      // Enter with modifier shift
+      if (event.key === "Enter" && !event.shiftKey) {
+        // do not add the character
+        event.preventDefault();
         // redirect to google search of query
-        //FIXME: query is always empty
-        window.location.href = `https://www.google.com/search?q=${query}`;
+        let query2 = query.replace(/\n/g, " ");
+        let query3 = query2.replace(/\s/g, "+");
+        window.location.href = `https://www.google.com/search?q=${query3}`;
       } else if (event.key === "ArrowLeft") {
         setRoty((x) => x - Math.PI / 2);
       } else if (event.key === "ArrowRight") {
@@ -156,15 +166,19 @@ function App() {
 
   return (
     <>
-      <input type="text" id="search" autofocus="autofocus" />
+      <div className="fixed inset-0 flex items-center justify-center z-10">
+        <div className="relative bg-transparent w-11/12 md:w-1/2 lg:w-1/3 xl:w-1/4 rounded-lg shadow-lg z-10">
+          <textarea id="search" className="w-full bg-transparent text-white text-center text-5xl rounded-lg px-4 py-2 pl-12 focus:outline-none focus:shadow-outline" type="text" placeholder="Search..." autofocus="autofocus" />
+        </div>
+      </div>
 
-      <Canvas>
-        <Text fontSize={0.5} position={[0, 0, 0]}>{query}</Text>
-
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        <Box shaderName={shaderName} roty={roty} position={[0, 0, -10]} />
-      </Canvas>
+      <div className="fixed inset-0 flex items-center justify-center">
+        <Canvas>
+          <ambientLight />
+          <pointLight position={[10, 10, 10]} />
+          <Box shaderName={shaderName} roty={roty} position={[0, 0, -30]} />
+        </Canvas>
+      </div>
     </>
   );
 }
